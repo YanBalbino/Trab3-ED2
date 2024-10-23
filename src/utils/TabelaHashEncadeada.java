@@ -39,7 +39,8 @@ public class TabelaHashEncadeada {
 	}
 
 	// cria uma nova tabela com o novo tamanho e copia os elementos antigos
-	public TabelaHashEncadeada resize(int novoTam){
+	public TabelaHashEncadeada resize(){
+		int novoTam = getNovoTam();
 		TabelaHashEncadeada novaTabela = new TabelaHashEncadeada(novoTam);
 		No no;
 		for (int i = 0; i < this.M; i++){
@@ -72,7 +73,7 @@ public class TabelaHashEncadeada {
 			
 			no = no.proximo;
 		}
-		
+
 		if (no == null) {
 			
 			no = new No();
@@ -89,13 +90,23 @@ public class TabelaHashEncadeada {
 		
 		int h = this.hash(codigo);
 		No no = this.tabela[h];
-		
+		No anterior = new No();
+
 		while(no != null) {
 			
 			if (no.os.getCodigo() == codigo) {
-				return no;
+				if (no == this.tabela[h]) 
+					return no;
+
+				// AUTOAJUSTE POR TRANSPOSIÇÃO (TR) DE ORDENS DE SERVIÇO
+				OrdemServico temp = anterior.os;
+				anterior.os = no.os;
+				no.os = temp;
+
+				return anterior;
+				
 			}	
-			
+			anterior = no;
 			no = no.proximo;
 		}
 		return null;
@@ -169,5 +180,35 @@ public class TabelaHashEncadeada {
 			System.out.println();
 			
 		}
+	}
+
+	// funções necessárias ao resize
+
+	private int getNovoTam(){
+		return buscarPrimoAbaixo(buscarPotencia2Acima(M));
+	}
+
+	private int buscarPotencia2Acima(int n){
+		int potencia = 1;
+		while (potencia < n){
+			potencia *= 2;
+		}
+		return potencia;
+	}
+
+	private int buscarPrimoAbaixo(int n){
+		int primo = n;
+		boolean ehPrimo = false;
+		while (!ehPrimo){
+			primo--;
+			ehPrimo = true;
+			for (int i = 2; i < primo; i++){
+				if (primo % i == 0){
+					ehPrimo = false;
+					break;
+				}
+			}
+		}
+		return primo;
 	}
 }

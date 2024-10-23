@@ -21,6 +21,12 @@ public class OrdemServico {
         System.out.print("Data: " + this.getData()+ " | \n");
     }
 
+    // lembrar de splittar por whitespace
+    public String toString(){
+        String os = getCodigo() + " " + getNome() + " " + getDescricao() + " " + getData();
+        return os;
+    }
+
     public int getCodigo(){
         return codigo;
     }
