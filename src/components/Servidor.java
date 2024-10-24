@@ -80,10 +80,10 @@ public class Servidor {
                 resposta = new Mensagem("2@OK");
                 break;
 
-            case 3: //TODO implementar listagem comprimida
+            case 3:
                 String content = "3@" + listarOS();
                 Mensagem msgLista = new Mensagem(content);
-                resposta = sendToClient(msgLista);
+                resposta = msgLista;
                 break;
 
             case 4:
