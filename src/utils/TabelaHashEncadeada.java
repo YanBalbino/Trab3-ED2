@@ -1,6 +1,5 @@
 package utils;
 
-//TODO implementar lista autoajustável
 
 import components.OrdemServico;
 
@@ -90,7 +89,7 @@ public class TabelaHashEncadeada {
 		
 		int h = this.hash(codigo);
 		No no = this.tabela[h];
-		No anterior = new No();
+		No anterior = new No(); // referência do anterior para autoajuste
 
 		while(no != null) {
 			

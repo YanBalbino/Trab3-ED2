@@ -18,6 +18,7 @@ public class Cache {
         No novo = new No();
         novo.os = novaOS;
         
+        // cache eviction
         if (qtRegistros == TAMANHO) {
             No atual = primeiro;
             while (atual.proximo != null){
@@ -27,27 +28,31 @@ public class Cache {
             return;
         }
 
+        // primeiro registro na cache
         if (qtRegistros == 0) {
             primeiro = novo;
             incrementQtRegistros();
             return;
         }
 
-        No atual = primeiro;
-        while (atual.proximo != null){
-            atual = atual.proximo;
-        }
-        atual.proximo = novo;
+        // adicionar no começo da cache
+        novo.proximo = primeiro;
+        primeiro = novo;
+        incrementQtRegistros();
     }
 
     public OrdemServico buscar(int codigo){
+        if (this.qtRegistros == 0){
+            return null;
+        }
         No atual = primeiro;
         No anterior = new No();
 
         while (atual != null){
             if (atual.os.getCodigo() == codigo){
-                if (atual == primeiro)
+                if (atual == primeiro){
                     return atual.os;
+                }
 
                 // AUTOAJUSTE POR MOVER PARA FRENTE (MF)
                 anterior.proximo = atual.proximo;
@@ -96,6 +101,10 @@ public class Cache {
 
     public void listarCache(){
         No atual = primeiro;
+        if (atual == null){
+            System.out.println("Cache vazia.");
+            return;
+        }
         while (atual != null){
             System.out.println("OS Código: " + atual.os.getCodigo());
             atual = atual.proximo;

@@ -31,12 +31,12 @@ public class Cliente{
             if (resposta == null)
                 return null;
             
-            OrdemServico os = new OrdemServico(-1, "", "", "");
+            OrdemServico os = new OrdemServico();
             
             String[] partes = processarMensagem(resposta);
 
             if (partes[0].equals("1")){
-                os.toOrdemServico(partes[1]);
+                os = os.toOrdemServico(partes[1]);
             }
             busca = os; 
             cache.adicionar(busca);
@@ -71,7 +71,6 @@ public class Cliente{
         String[] partes = processarMensagem(resposta);
 
         if (partes[0].equals("2") && partes[1].equals("OK"))
-            System.out.println("Ordem de serviço cadastrada com sucesso.");
             return;
         
     }
@@ -88,6 +87,7 @@ public class Cliente{
     }
 
     public void imprimirCache(){
+        System.out.println("Cache:");
         cache.listarCache();
     }
 

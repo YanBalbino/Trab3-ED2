@@ -1,25 +1,28 @@
-import utils.Huffman.ArvoreHuffman;
+import components.Cliente;
+import components.Servidor;
+import components.OrdemServico;
+import java.util.Random;
+
 
 public class Test {
     public static void main(String[] args) {
-        int n = 6;
-        char[] vetorDeCaracteres = { 'a', 'b', 'c', 'd', 'e', 'f' };
-        int[] vetorDeFrequencias = { 5, 9, 12, 13, 16, 45 };
+        OrdemServico os = new OrdemServico();
+        Cliente cliente = new Cliente();
+        Servidor servidor = new Servidor();
 
-        String s = "";
-        for (int i = 0; i < vetorDeFrequencias.length; i++) {
-            for (int j = 0; j < vetorDeFrequencias[i]; j++) {
-            s += vetorDeCaracteres[i];
-            }
+        // teste com tamanho de base de dados menor para garantir colisões
+        for (int i = 0; i < 10; i++){
+            os = new OrdemServico(i, "nome " + i, "descrição " + i, "data " + i);
+            cliente.CadastrarOS(os, servidor);
         }
-        ArvoreHuffman arv = new ArvoreHuffman();
-        arv.construirArvore(n, vetorDeCaracteres, vetorDeFrequencias);
-        arv.imprimirCodigo(arv.getRaiz(), " ");
-        
-        String[] codigos = arv.gerarCodigosHuffman();
+        cliente.listarOS(servidor);
 
-        String comprimida = arv.comprimir(s, codigos);
-        System.out.println("Mensagem comprimida: " + comprimida);
-        System.out.println("Mensagem descomprimida: " + arv.descomprimir(comprimida));
-    }
+        cliente.buscarOS(5, servidor);
+        cliente.buscarOS(4, servidor);
+        cliente.buscarOS(6, servidor);
+
+        System.out.println("\nTestanto autoajuste na bd\n");
+
+        cliente.listarOS(servidor);
+    }   
 }

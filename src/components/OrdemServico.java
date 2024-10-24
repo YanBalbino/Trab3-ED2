@@ -6,6 +6,13 @@ public class OrdemServico {
     String descricao;
     String data;
 
+    public OrdemServico(){
+        this.codigo = -1;
+        this.nome = "";
+        this.descricao = "";
+        this.data = "";
+    }
+
     public OrdemServico(int codigo, String nome, String descricao, String data){
         this.codigo = codigo;
         this.nome = nome;
@@ -27,7 +34,7 @@ public class OrdemServico {
     }
 
     public OrdemServico toOrdemServico(String os){
-        String[] osArray = os.split("|");
+        String[] osArray = os.split("\\|");
         OrdemServico ordem = new OrdemServico(Integer.parseInt(osArray[0]), osArray[1], osArray[2], osArray[3]);
         return ordem;
     }

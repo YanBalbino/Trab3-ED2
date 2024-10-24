@@ -63,7 +63,7 @@ public class Servidor {
         int operacao = Integer.parseInt(partes[0]);
         
         switch (operacao){
-            case 1:
+            case 1: // buscar
                 int codigo = Integer.parseInt(partes[1]);
                 No busca = buscarOS(codigo);
 
@@ -73,28 +73,29 @@ public class Servidor {
                 }
                 break;
 
-            case 2:
-                String[] osArray = partes[1].split("|");
+            case 2: // cadastrar
+                String[] osArray = partes[1].split("\\|");
+
                 OrdemServico os = new OrdemServico(Integer.parseInt(osArray[0]), osArray[1], osArray[2], osArray[3]);
                 CadastrarOS(os);
                 resposta = new Mensagem("2@OK");
                 break;
 
-            case 3:
+            case 3: // listar
                 String content = "3@" + listarOS();
                 Mensagem msgLista = new Mensagem(content);
                 resposta = msgLista;
                 break;
 
-            case 4:
+            case 4: // alterar
                 int codigoOS = Integer.parseInt(partes[1]);
-                String[] osArrayAlt = partes[2].split("|");
+                String[] osArrayAlt = partes[2].split("\\|");
                 OrdemServico osAlt = new OrdemServico(Integer.parseInt(osArrayAlt[0]), osArrayAlt[1], osArrayAlt[2], osArrayAlt[3]);
                 alterarOS(codigoOS, osAlt);
                 resposta = new Mensagem("4@OK");
                 break;
 
-            case 5:
+            case 5: // remover
                 int codigoOSRem = Integer.parseInt(partes[1]);
                 removerOS(codigoOSRem);
                 resposta = new Mensagem("5@OK");

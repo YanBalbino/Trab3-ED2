@@ -107,8 +107,8 @@ public class App {
         s.close();
     }
     public static void gerarInterface(){
-        System.out.println("1 - Cadastrar Ordem de Serviço");
-        System.out.println("2 - Buscar Ordem de Serviço");
+        System.out.println("1 - Buscar Ordem de Serviço");
+        System.out.println("2 - Cadastrar Ordem de Serviço");
         System.out.println("3 - Listar Ordens de Serviço");
         System.out.println("4 - Alterar Ordem de Serviço");
         System.out.println("5 - Remover Ordem de Serviço");
