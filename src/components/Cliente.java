@@ -11,6 +11,10 @@ public class Cliente{
         cache = new Cache();
     }
 
+    public Cache getCache(){
+        return cache;
+    }
+
     public Mensagem sendToServer(Mensagem msg, Servidor servidor){
         return servidor.sendToClient(msg);
     }
@@ -23,6 +27,7 @@ public class Cliente{
     // buscar (operação 1)
     public OrdemServico buscarOS(int codigo, Servidor servidor){
         OrdemServico busca = cache.buscar(codigo);
+
         if (busca == null){
             String content = "1@" + codigo;
             Mensagem msg = new Mensagem(content);
@@ -42,6 +47,7 @@ public class Cliente{
             cache.adicionar(busca);
         }
 
+        imprimirCache(cache.getQtRegistros());
         return busca;
     }
 
@@ -71,6 +77,7 @@ public class Cliente{
         String[] partes = processarMensagem(resposta);
 
         if (partes[0].equals("2") && partes[1].equals("OK"))
+            imprimirCache(cache.getQtRegistros());
             return;
         
     }
@@ -83,12 +90,13 @@ public class Cliente{
 
         String[] partes = processarMensagem(resposta);
         String lista = partes[1];
-        System.out.println(lista); //TODO verificar essa lista pecaminosa
+        System.out.println(lista); 
+        imprimirCache(cache.getQtRegistros());
     }
 
-    public void imprimirCache(){
-        System.out.println("Cache:");
-        cache.listarCache();
+    public void imprimirCache(int qtRegistros){
+        System.out.println("\nCache atual:");
+        cache.listarCache(qtRegistros);
     }
 
     // alterar (operação 4)
@@ -116,7 +124,9 @@ public class Cliente{
 
         String[] partes = processarMensagem(resposta);
 
-        if (partes[0].equals("4") && partes[1].equals("OK")){
+        if (partes[0].equals("4")){
+            OrdemServico alterada = new OrdemServico();
+            alterada = alterada.toOrdemServico(partes[1]);
             System.out.println("Ordem de serviço alterada com sucesso.");
             return;
         }
@@ -127,6 +137,7 @@ public class Cliente{
         else{
             System.out.println("Ordem de serviço não registrada na cache, nenhuma alteração feita.");
         }
+        imprimirCache(cache.getQtRegistros());
     }
 
     // remover (operação 5)
@@ -142,15 +153,18 @@ public class Cliente{
         
         String[] partes = processarMensagem(resposta);
 
-        if (partes[0].equals("5") && partes[1].equals("OK")){
-            System.out.println("Ordem de serviço removida com sucesso.");
+        if (partes[0].equals("5")){
+            OrdemServico removida = new OrdemServico();
+            removida = removida.toOrdemServico(partes[1]);
         }
 
         cache.remocaoDireta(codigoOS);
+        imprimirCache(cache.getQtRegistros());
     }  
 
     // acessar a quantidade atual de registros na base de dados
     public int qtRegistros(Servidor servidor){
+        imprimirCache(cache.getQtRegistros());
         return servidor.qtRegistrosAtual();
     }
 
@@ -161,7 +175,7 @@ public class Cliente{
         for (int i = 0; i < 100; i++){
             LocalDateTime hoje = LocalDateTime.now();
             String dataFormatada = hoje.format(formatter);
-            OrdemServico os = new OrdemServico(i, "OS número " + i, "Descrição da OS " + i, dataFormatada);
+            OrdemServico os = new OrdemServico(i, "OS numero " + i, "Descricao da OS " + i, dataFormatada);
             CadastrarOS(os, servidor);
         }
 

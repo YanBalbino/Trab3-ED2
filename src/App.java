@@ -92,7 +92,11 @@ public class App {
                 // imprimir cache
                 case 7:
                     System.out.println();
-                    cliente.imprimirCache();
+                    cliente.imprimirCache(cliente.getCache().getQtRegistros());
+                    break;
+
+                case 8:
+                    roteiroApresentacao();
                     break;
 
                 // sair
@@ -114,6 +118,29 @@ public class App {
         System.out.println("5 - Remover Ordem de Serviço");
         System.out.println("6 - Quantidade de Registros");
         System.out.println("7 - Imprimir Cache");
+        System.out.println("8 - Roteiro da Apresentação");
         System.out.println("0 - Sair");
+    }
+
+    public static void roteiroApresentacao(){
+        
+        
+        /*
+         * Inicia o programa:
+● 100 ordens de serviço devem ser adicionadas na base de dados do
+servidor.
+■ Realizar (crie funções para as operações):
+● Três consultas.
+● Uma listagem.
+● Dois cadastros seguidos de uma listagem.
+● Duas alterações seguidas de uma listagem.
+● Três remoções seguidas de uma listagem.
+● Escolha operações de forma a evidenciar o funcionamento do cache
+eviction.
+● Buscar as ocorrências de operações como cadastrar e remover registros
+de OS no servidor.
+○ Use um algoritmo de processamento de strings.
+
+         */
     }
 }

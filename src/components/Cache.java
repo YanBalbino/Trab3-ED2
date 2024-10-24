@@ -1,6 +1,6 @@
 package components;
 
-import utils.No;
+import utils.TabelaHash.No;
 
 
 public class Cache {
@@ -18,13 +18,23 @@ public class Cache {
         No novo = new No();
         novo.os = novaOS;
         
-        // cache eviction
+        // cache eviction por Least Recently Used (LRU)
         if (qtRegistros == TAMANHO) {
             No atual = primeiro;
+            No penultimo = new No();
+
             while (atual.proximo != null){
+                penultimo = atual;
                 atual = atual.proximo;
             }
-            atual = novo; // POLÍTICA DO MENOS RECENTEMENTE USADO (LRU)
+
+            // remover último registro
+            // novo registro é adicionado no começo da cache por MF
+            novo.proximo = primeiro;
+            primeiro = novo;
+            penultimo.proximo = null;
+            atual = null; 
+
             return;
         }
 
@@ -99,9 +109,9 @@ public class Cache {
         }
     }
 
-    public void listarCache(){
+    public void listarCache(int qtRegistros){
         No atual = primeiro;
-        if (atual == null){
+        if (qtRegistros == 0){
             System.out.println("Cache vazia.");
             return;
         }

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import utils.No;
-import utils.TabelaHashEncadeada;
+import utils.TabelaHash.No;
+import utils.TabelaHash.TabelaHashEncadeada;
 
 public class Servidor {
     private TabelaHashEncadeada baseDados;
@@ -35,10 +35,6 @@ public class Servidor {
     public void setBaseDados(TabelaHashEncadeada bd){
         this.baseDados = bd;
     }
-
-    private TabelaHashEncadeada getBD(){
-        return this.baseDados;
-    }
     
     public static int getTotalRegistros(){
         return totalRegistros;
@@ -61,9 +57,13 @@ public class Servidor {
         String[] partes = conteudo.split("@");
         Mensagem resposta = null;
         int operacao = Integer.parseInt(partes[0]);
+
+        String logOp = "";
         
         switch (operacao){
             case 1: // buscar
+                logOp += "Busca";
+
                 int codigo = Integer.parseInt(partes[1]);
                 No busca = buscarOS(codigo);
 
@@ -71,34 +71,50 @@ public class Servidor {
                     String content = "1@" + busca.os.toString();
                     resposta = new Mensagem(content);
                 }
+                atualizarLog(logOp + "\n" + busca.os.toString() + "\n");
                 break;
 
             case 2: // cadastrar
+                logOp += "Cadastrar";
+
                 String[] osArray = partes[1].split("\\|");
 
                 OrdemServico os = new OrdemServico(Integer.parseInt(osArray[0]), osArray[1], osArray[2], osArray[3]);
                 CadastrarOS(os);
                 resposta = new Mensagem("2@OK");
+
+                atualizarLog(logOp + "\n" + os.toString() + "\n");
                 break;
 
             case 3: // listar
+                logOp += "Listar";
+
                 String content = "3@" + listarOS();
                 Mensagem msgLista = new Mensagem(content);
                 resposta = msgLista;
+                atualizarLog(logOp + "\n" + listarOS() + "\n");
                 break;
 
             case 4: // alterar
+                logOp += "Alterar";
+
                 int codigoOS = Integer.parseInt(partes[1]);
                 String[] osArrayAlt = partes[2].split("\\|");
                 OrdemServico osAlt = new OrdemServico(Integer.parseInt(osArrayAlt[0]), osArrayAlt[1], osArrayAlt[2], osArrayAlt[3]);
-                alterarOS(codigoOS, osAlt);
+                OrdemServico alterada = alterarOS(codigoOS, osAlt);
                 resposta = new Mensagem("4@OK");
+
+                atualizarLog(logOp + "\n" + alterada.toString() + "\n");
                 break;
 
             case 5: // remover
+                logOp += "Remover";
+
                 int codigoOSRem = Integer.parseInt(partes[1]);
-                removerOS(codigoOSRem);
+                OrdemServico removida = removerOS(codigoOSRem);
                 resposta = new Mensagem("5@OK");
+
+                atualizarLog(logOp + "\n" + removida.toString() + "\n");
                 break;
 
             default:
@@ -113,13 +129,11 @@ public class Servidor {
     public No buscarOS(int codigo){
         No busca = baseDados.buscar(codigo);
         if (busca != null){
-            atualizarLog("Busca");
             return busca;
         }
         else{
             System.out.println("Ordem de serviço não encontrada.");
         }
-        atualizarLog("Busca");
         return null;
     }  
 
@@ -129,27 +143,21 @@ public class Servidor {
         }
         baseDados.inserir(os);
         totalRegistros++;
-
-        atualizarLog("Cadastro");
     }
 
     public String listarOS(){
         String lista = baseDados.imprimirTabelaHash();
-
-        atualizarLog("Listagem");
-
         return lista;
     }
 
-    public void alterarOS(int codigoOS, OrdemServico os){
-        baseDados.alterar(codigoOS, os);
+    public OrdemServico alterarOS(int codigoOS, OrdemServico os){
+        OrdemServico alterada = baseDados.alterar(codigoOS, os);
         System.out.println("Ordem de serviço alterada no servidor com sucesso");
-        atualizarLog("Alteração");
+        return alterada;
     }
 
-    public void removerOS(int codigoOS){
-        baseDados.remover(codigoOS);
-        atualizarLog("Remoção");
+    public OrdemServico removerOS(int codigoOS){
+        return baseDados.remover(codigoOS);
     }  
 
     public int qtRegistrosAtual(){
@@ -161,38 +169,36 @@ public class Servidor {
         setBaseDados(expandida);
     }
 
-    private void atualizarLog(String operacao){
-        TabelaHashEncadeada bd = getBD();
-        No temp;
-
+    private void atualizarLog(String logContent){
         try{
             FileWriter fw = new FileWriter(this.logs, true);
-            fw.write("\nOperação: " + operacao);
+            fw.write(logContent + "\n");
             fw.close();
         } catch (IOException e){
             System.out.println("Erro ao atualizar arquivo de logs.");
         }
 
-        for (int i = 0; i < bd.getTam(); i++){
-            temp = bd.getNoAt(i);
-            try{
-                FileWriter fw;
-                while (temp != null){
-                    fw = new FileWriter(this.logs, true);
-                    
-                    fw.write("\n");
-                    fw.write(temp.os.getCodigo() + " " + temp.os.getNome() +  " " + temp.os.getDescricao() 
-                    +  " " + temp.os.getData() + "\n");
-    
-                    fw.close();
-                    
-                    temp = temp.proximo;
-                }
-                
+        
+    }
 
-            } catch (IOException e){
-                System.out.println("Erro ao atualizar arquivo de logs.");
+    // contador por Brute force
+    public int contadorFrequencia(String s, String padrao){
+        int cont = 0;
+
+        int M = padrao.length();
+        int N = s.length();
+
+        for (int i = 0; i <= N - M; i++) {
+            int j;
+            for (j = 0; j < M; j++)
+                if (s.charAt(i + j) != padrao.charAt(j))
+                    break;
+            if (j == M) {
+                System.out.println("Padrão encontrado no índice " + i);
+                cont++;
             }
         }
+
+        return cont;
     }
 }

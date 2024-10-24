@@ -1,4 +1,4 @@
-package utils;
+package utils.TabelaHash;
 
 
 import components.OrdemServico;
@@ -113,7 +113,7 @@ public class TabelaHashEncadeada {
 	}
 
 	// alterar
-	public void alterar(int codigo, OrdemServico alterada) {
+	public OrdemServico alterar(int codigo, OrdemServico alterada) {
 		
 		int h = this.hash(codigo);
 		No no = this.tabela[h];
@@ -127,11 +127,11 @@ public class TabelaHashEncadeada {
 			
 			no = no.proximo;
 		}
-		
+		return no.os;
 	}
 
 	// remover
-	public void remover(int codigo) {
+	public OrdemServico remover(int codigo) {
 		
 		int h = this.hash(codigo);
 		No no = this.tabela[h];
@@ -147,16 +147,14 @@ public class TabelaHashEncadeada {
 			no = no.proximo;
 		}
 		
-		if (no == null) {
-			return;
-		}
-		
-		if (anterior == null) {
+		if (no == null || anterior == null) 
 			this.tabela[h] = no.proximo;
-		} else {
+		
+		else 
 			anterior.proximo = no.proximo;
-		}
+		
 		qtRegistros--;
+		return no.os;
 	}
 	
 	// listar todos os registros
