@@ -160,26 +160,25 @@ public class TabelaHashEncadeada {
 		qtRegistros--;
 	}
 	
-	// imprimir índice + elementos da lista (se houver), um por linha
-	public void imprimirTabelaHash() {
+	// listar todos os registros
+	public String imprimirTabelaHash() {
 		No no;
-		
+		String tabela = "";
 		for(int i = 0; i < this.M; i++) {
 			
 			no = this.tabela[i];
 			
-			System.out.println("Índice " + i + ":");
+			tabela = tabela + "Índice " + i + ":" + "\n";
 			
 			while (no != null) {
-				System.out.print(" --> ");
-				no.os.imprimirOS();
-				System.out.println();
+				tabela = tabela + " --> " + no.os.toString() + "\n";
 				no = no.proximo;
 				
 			}
-			System.out.println();
+			tabela = tabela + "\n";
 			
 		}
+		return tabela;
 	}
 
 	// funções necessárias ao resize

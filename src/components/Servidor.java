@@ -51,7 +51,64 @@ public class Servidor {
         }
         return false;
     }
-    
+
+    public Mensagem sendToClient(Mensagem msg){
+        return processarMensagem(msg);
+    }
+
+    private Mensagem processarMensagem(Mensagem msg){
+        String conteudo = msg.arv.descomprimir(msg.content);
+        String[] partes = conteudo.split("@");
+        Mensagem resposta = null;
+        int operacao = Integer.parseInt(partes[0]);
+        
+        switch (operacao){
+            case 1:
+                int codigo = Integer.parseInt(partes[1]);
+                No busca = buscarOS(codigo);
+
+                if (busca != null){
+                    String content = "1@" + busca.os.toString();
+                    resposta = new Mensagem(content);
+                }
+                break;
+
+            case 2:
+                String[] osArray = partes[1].split("|");
+                OrdemServico os = new OrdemServico(Integer.parseInt(osArray[0]), osArray[1], osArray[2], osArray[3]);
+                CadastrarOS(os);
+                resposta = new Mensagem("2@OK");
+                break;
+
+            case 3: //TODO implementar listagem comprimida
+                String content = "3@" + listarOS();
+                Mensagem msgLista = new Mensagem(content);
+                resposta = sendToClient(msgLista);
+                break;
+
+            case 4:
+                int codigoOS = Integer.parseInt(partes[1]);
+                String[] osArrayAlt = partes[2].split("|");
+                OrdemServico osAlt = new OrdemServico(Integer.parseInt(osArrayAlt[0]), osArrayAlt[1], osArrayAlt[2], osArrayAlt[3]);
+                alterarOS(codigoOS, osAlt);
+                resposta = new Mensagem("4@OK");
+                break;
+
+            case 5:
+                int codigoOSRem = Integer.parseInt(partes[1]);
+                removerOS(codigoOSRem);
+                resposta = new Mensagem("5@OK");
+                break;
+
+            default:
+                System.out.println("Operação inválida");
+                
+                break;
+        }
+        return resposta;
+
+    }
+
     public No buscarOS(int codigo){
         No busca = baseDados.buscar(codigo);
         if (busca != null){
@@ -75,9 +132,12 @@ public class Servidor {
         atualizarLog("Cadastro");
     }
 
-    public void listarOS(){
-        baseDados.imprimirTabelaHash();
+    public String listarOS(){
+        String lista = baseDados.imprimirTabelaHash();
+
         atualizarLog("Listagem");
+
+        return lista;
     }
 
     public void alterarOS(int codigoOS, OrdemServico os){

@@ -1,21 +1,25 @@
-import components.Cache;
-import components.OrdemServico;
-import utils.No;
-
+import utils.Huffman.ArvoreHuffman;
 
 public class Test {
     public static void main(String[] args) {
-        Cache c = new Cache();
+        int n = 6;
+        char[] vetorDeCaracteres = { 'a', 'b', 'c', 'd', 'e', 'f' };
+        int[] vetorDeFrequencias = { 5, 9, 12, 13, 16, 45 };
 
-        OrdemServico os1 = new OrdemServico(1, "OS1", "Descricao1", "01/01/2021");
-        OrdemServico os2 = new OrdemServico(2, "OS2", "Descricao2", "02/02/2022");
-        No n = new No();
-        n.os = os1;
-        c.adicionar(n);
-        n = new No();
-        n.os = os2;
-        c.adicionar(n);
+        String s = "";
+        for (int i = 0; i < vetorDeFrequencias.length; i++) {
+            for (int j = 0; j < vetorDeFrequencias[i]; j++) {
+            s += vetorDeCaracteres[i];
+            }
+        }
+        ArvoreHuffman arv = new ArvoreHuffman();
+        arv.construirArvore(n, vetorDeCaracteres, vetorDeFrequencias);
+        arv.imprimirCodigo(arv.getRaiz(), " ");
+        
+        String[] codigos = arv.gerarCodigosHuffman();
 
-        c.listarCache();
+        String comprimida = arv.comprimir(s, codigos);
+        System.out.println("Mensagem comprimida: " + comprimida);
+        System.out.println("Mensagem descomprimida: " + arv.descomprimir(comprimida));
     }
 }

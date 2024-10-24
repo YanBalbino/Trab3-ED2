@@ -21,10 +21,15 @@ public class OrdemServico {
         System.out.print("Data: " + this.getData()+ " | \n");
     }
 
-    // lembrar de splittar por whitespace
     public String toString(){
-        String os = getCodigo() + " " + getNome() + " " + getDescricao() + " " + getData();
+        String os = getCodigo() + "|" + getNome() + "|" + getDescricao() + "|" + getData();
         return os;
+    }
+
+    public OrdemServico toOrdemServico(String os){
+        String[] osArray = os.split("|");
+        OrdemServico ordem = new OrdemServico(Integer.parseInt(osArray[0]), osArray[1], osArray[2], osArray[3]);
+        return ordem;
     }
 
     public int getCodigo(){

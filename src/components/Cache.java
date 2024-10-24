@@ -13,9 +13,11 @@ public class Cache {
         qtRegistros = 0;
     }
 
-    public void adicionar(No novo) {
+    public void adicionar(OrdemServico novaOS) {
         int qtRegistros = getQtRegistros();
-
+        No novo = new No();
+        novo.os = novaOS;
+        
         if (qtRegistros == TAMANHO) {
             No atual = primeiro;
             while (atual.proximo != null){
@@ -38,21 +40,21 @@ public class Cache {
         atual.proximo = novo;
     }
 
-    public No buscar(int codigo){
+    public OrdemServico buscar(int codigo){
         No atual = primeiro;
         No anterior = new No();
 
         while (atual != null){
             if (atual.os.getCodigo() == codigo){
                 if (atual == primeiro)
-                    return atual;
+                    return atual.os;
 
                 // AUTOAJUSTE POR MOVER PARA FRENTE (MF)
                 anterior.proximo = atual.proximo;
                 atual.proximo = primeiro;
                 primeiro = atual;
 
-                return atual;
+                return atual.os;
             }
             anterior = atual;
             atual = atual.proximo;
