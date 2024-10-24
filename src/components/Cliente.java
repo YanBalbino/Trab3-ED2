@@ -33,14 +33,15 @@ public class Cliente{
             Mensagem msg = new Mensagem(content);
             Mensagem resposta = sendToServer(msg, servidor);
             
-            if (resposta == null)
-                return null;
-            
             OrdemServico os = new OrdemServico();
             
             String[] partes = processarMensagem(resposta);
 
             if (partes[0].equals("1")){
+                if (partes[1].equals("OS não encontrada")){
+                    System.out.println("Ordem de serviço não encontrada.\n");
+                    return null;
+                }
                 os = os.toOrdemServico(partes[1]);
             }
             busca = os; 
@@ -118,7 +119,7 @@ public class Cliente{
             return;
         }
 
-        String content = "4@" + codigoOS + "-" + os.toString();
+        String content = "4@" + os.toString();
         Mensagem msg = new Mensagem(content);
         Mensagem resposta = sendToServer(msg, servidor);
 
@@ -126,8 +127,8 @@ public class Cliente{
 
         if (partes[0].equals("4")){
             OrdemServico alterada = new OrdemServico();
-            alterada = alterada.toOrdemServico(partes[1]);
-            System.out.println("Ordem de serviço alterada com sucesso.");
+            //alterada = alterada.toOrdemServico(partes[1]);
+            System.out.println("Ordem de serviço alterada com sucesso.\n");
             return;
         }
          
@@ -155,7 +156,7 @@ public class Cliente{
 
         if (partes[0].equals("5")){
             OrdemServico removida = new OrdemServico();
-            removida = removida.toOrdemServico(partes[1]);
+            //removida = removida.toOrdemServico(partes[1]);
         }
 
         cache.remocaoDireta(codigoOS);

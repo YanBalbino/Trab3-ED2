@@ -3,6 +3,8 @@ package components;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import utils.TabelaHash.No;
 import utils.TabelaHash.TabelaHashEncadeada;
@@ -11,8 +13,6 @@ public class Servidor {
     private TabelaHashEncadeada baseDados;
     private static int totalRegistros;
     File logs;
-
-    //TODO implementar compressão e descompressão
 
     public Servidor() {
         // quantidade inicial de OS cadastradas: 100
@@ -71,6 +71,11 @@ public class Servidor {
                     String content = "1@" + busca.os.toString();
                     resposta = new Mensagem(content);
                 }
+                else{
+                    resposta = new Mensagem("1@OS não encontrada");
+                    atualizarLog(logOp + "\n" + "null" + "\n");
+                    break;
+                }
                 atualizarLog(logOp + "\n" + busca.os.toString() + "\n");
                 break;
 
@@ -97,10 +102,10 @@ public class Servidor {
 
             case 4: // alterar
                 logOp += "Alterar";
-
-                int codigoOS = Integer.parseInt(partes[1]);
-                String[] osArrayAlt = partes[2].split("\\|");
-                OrdemServico osAlt = new OrdemServico(Integer.parseInt(osArrayAlt[0]), osArrayAlt[1], osArrayAlt[2], osArrayAlt[3]);
+                String[] osArrayAlt = partes[1].split("\\|");
+                int codigoOS = Integer.parseInt(osArrayAlt[0]);
+                
+                OrdemServico osAlt = new OrdemServico(codigoOS, osArrayAlt[1], osArrayAlt[2], osArrayAlt[3]);
                 OrdemServico alterada = alterarOS(codigoOS, osAlt);
                 resposta = new Mensagem("4@OK");
 
@@ -169,6 +174,24 @@ public class Servidor {
         setBaseDados(expandida);
     }
 
+    public File getLogs(){
+        return this.logs;
+    }
+
+    public String logsToString(){
+        String logsContent = "";
+        try{
+            Scanner sc = new Scanner(logs);
+            while (sc.hasNextLine()){
+                logsContent += sc.nextLine() + "\n";
+            }
+            sc.close();
+        } catch (FileNotFoundException e){
+            System.out.println("Erro ao ler arquivo de logs.");
+        }
+        return logsContent;
+    }
+
     private void atualizarLog(String logContent){
         try{
             FileWriter fw = new FileWriter(this.logs, true);
@@ -177,8 +200,6 @@ public class Servidor {
         } catch (IOException e){
             System.out.println("Erro ao atualizar arquivo de logs.");
         }
-
-        
     }
 
     // contador por Brute force
@@ -194,7 +215,6 @@ public class Servidor {
                 if (s.charAt(i + j) != padrao.charAt(j))
                     break;
             if (j == M) {
-                System.out.println("Padrão encontrado no índice " + i);
                 cont++;
             }
         }
